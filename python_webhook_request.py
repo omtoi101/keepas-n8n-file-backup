@@ -261,7 +261,7 @@ class KeePassBackupManager:
             self.logger.info(f"Uploading {filename} to Dropbox via webhook: {self.n8n_config.webhook_url}")
             with open(file_path, 'rb') as file:
                 files = {
-                    'data': (filename, file, 'application/octet-stream')
+                    filename: file  # Use filename as key, just like in test.py
                 }
                 response = requests.post(
                     self.n8n_config.webhook_url,
