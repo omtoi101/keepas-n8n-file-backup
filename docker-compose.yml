@@ -1,4 +1,4 @@
-
+                                                                            
 services:
   keepass-backup:
     build: .
@@ -8,5 +8,13 @@ services:
       - TZ=Australia/Melbourne
     volumes:
       # Host directory for config.ini
-      - .config.ini:/config/config.ini
       - .:/app
+      - /path/to/your/passwords:/app/passwords.kdbx
+
+
+
+
+
+
+
+
