@@ -9,7 +9,7 @@ services:
     volumes:
       # Host directory for config.ini
       - .:/app
-      - /path/to/your/passwords:/app/passwords.kdbx
+      - /path/to/your/passwords/:/app/passwords/
 
 
 
