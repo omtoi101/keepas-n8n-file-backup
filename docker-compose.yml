@@ -1,4 +1,3 @@
-version: "3.9"
 
 services:
   keepass-backup:
@@ -9,8 +8,5 @@ services:
       - TZ=Australia/Melbourne
     volumes:
       # Host directory for config.ini
-      - ./config/config.ini:/config/config.ini
-      # Optional: mount KeePass database folder
-      - ./databases:/databases
-      # Optional: persist logs
-      - ./logs:/app
+      - .config.ini:/config/config.ini
+      - .:/app
