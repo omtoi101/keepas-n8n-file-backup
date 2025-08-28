@@ -244,6 +244,7 @@ class KeePassBackupManager:
     def upload_to_dropbox(self, file_path: str, db_config: DatabaseConfig) -> Dict:
         """Upload file to Dropbox via n8n webhook"""
         try:
+            filename = Path(file_path).name
             metadata = {
                 'source_database': db_config.path,
                 'custom_name': db_config.custom_name or '',
@@ -251,28 +252,30 @@ class KeePassBackupManager:
                 'encrypted': self.backup_config.encrypt_backup,
                 'file_hash': self.get_file_hash(file_path)
             }
-            form_data = {
+            params = {
+                'filename': filename,
                 'description': f'KeePass backup from {db_config.custom_name or Path(db_config.path).name}',
                 'category': 'keepass_backup',
                 'backup_type': 'automated',
                 'metadata': json.dumps(metadata)
             }
-            filename = Path(file_path).name
+
             self.logger.info(f"Uploading {filename} to Dropbox via webhook: {self.n8n_config.webhook_url}")
-            with open(file_path, 'rb') as file:
-                files = {
-                    filename: file  # Use filename as key, just like in test.py
-                }
+
+            with open(file_path, 'rb') as file_data:
                 response = requests.post(
                     self.n8n_config.webhook_url,
-                    files=files,
-                    data=form_data,
+                    data=file_data,
+                    params=params,
                     auth=HTTPBasicAuth(self.n8n_config.username, self.n8n_config.password),
-                    timeout=self.n8n_config.timeout
+                    timeout=self.n8n_config.timeout,
+                    headers={'Content-Type': 'application/octet-stream'}
                 )
+
             self.logger.debug(f"Webhook response status: {response.status_code}")
             if not response.ok:
                 self.logger.error(f"Webhook response content: {response.text}")
+
             result = {
                 "status_code": response.status_code,
                 "success": response.status_code == 200,
